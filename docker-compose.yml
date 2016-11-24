@@ -1,0 +1,18 @@
+redis:
+    image: redis:latest
+sktz:
+    image: sktz:latest
+    command: gunicorn -b 0.0.0.0:8000 -k flask_sockets.worker hello:app
+    volumes:
+        - .:/src
+    links:
+        - redis
+    ports:
+        - "8000:8000"
+
+
+
+
+
+
+
