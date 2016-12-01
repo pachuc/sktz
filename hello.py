@@ -1,14 +1,23 @@
 from flask import Flask
 from flask_sockets import Sockets
+import logging
 
 
+logger = logging.getLoggerClass()
 app = Flask(__name__)
 sockets = Sockets(app)
 
+@sockets.route('/controller/<controller_id>')
+def controller(ws, controller_id):
+    """
+    This countroller route will open a persitent websocket, 
+    and write the messages of the websocket to redis.
+    """
+    logging.error('Controller {0} connected.'.format(controller_id))
 
 @sockets.route('/echo')
 def echo_socket(ws):
-    print 'test'
+    logging.error('Web socket intialized')
     while not ws.closed:
         message = ws.receive()
         ws.send(message)
@@ -16,7 +25,7 @@ def echo_socket(ws):
 
 @app.route('/')
 def hello():
-    print 'hello test'
+    logging.error('This is a test!')
     return 'Hello World!'
 
 
