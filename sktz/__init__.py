@@ -3,6 +3,7 @@ from flask_sockets import Sockets
 import logging
 import redis
 import uuid
+import json
 
 logger = logging.getLoggerClass()
 app = Flask(__name__)
@@ -15,7 +16,7 @@ def start_game(num_controllers):
     game_state = {}
     game_state['status'] = 'INIT'
     game_state['num_controllers'] = num_controllers
-    r.set(game_id, game_state)
+    r.set(game_id, json.dumps(game_state))
     logging.error('Initalized new game {0} ({1})'.format(game_id, game_state))
     return str(game_id)
 
@@ -40,12 +41,12 @@ def get_input(game_id, controller_id):
 
 @app.route('/get_game_state/<game_id>')
 def get_game_state(game_id):
-    game_state = r.get(game_id)
-    num_controllers = game_state['num_controllers']
+    game_state = json.loads(r.get(game_id))
+    num_controllers = int(game_state['num_controllers'])
     
     for controller_id in xrange(0, num_controllers):
         redis_key = '{0}/{1}'.format(game_id, controller_id)
         controller_name = 'controller {0}'.format(controller_id)
         game_state[controller_name] = r.get(redis_key)
 
-    return game_state
+    return json.dumps(game_state)

@@ -1,17 +1,17 @@
-from websocket import create_connection
 import time
+import json
 import requests
 
-print 'Sending request to start a game'
-r = requests.get('http://localhost:8000/start_game')
-print 'Got game id'
-print r.text
-
+num_controllers = 4
+print 'Intializing the game with {0} controllers'.format(num_controllers)
+r = requests.get('http://localhost:8000/start_game/{0}'.format(num_controllers))
 game_id = r.text
-print 'making failing request'
-ws = create_connection('ws://localhost:8000/connect_controller/1/1')
-print 'making successful request'
-ws = create_connection('ws://localhost:8000/connect_controller/{0}/1'.format(game_id))
-ws.send('Hello world')
-ws.close()
+print 'Game intialized with id {0}'.format(game_id)
 
+while True:
+    r = requests.get('http://localhost:8000/get_game_state/{0}'.format(game_id))
+    game_state = json.loads(r.text)
+    for i in xrange(0, num_controllers):
+        controller_name = 'controller {0}'.format(i)
+        print '{0} is {1}'.format(controller_name, game_state[controller_name])        
+    time.sleep(30)
