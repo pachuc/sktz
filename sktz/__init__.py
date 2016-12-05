@@ -18,7 +18,7 @@ def start_game(num_controllers):
     game_state['num_controllers'] = num_controllers
     r.set(game_id, json.dumps(game_state))
     logging.error('Initalized new game {0} ({1})'.format(game_id, game_state))
-    render_template('Game.html', game_id=str(game_id))
+    return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers)
 
 @sockets.route('/connect_controller/<game_id>/<controller_id>')
 def connect_controller(ws, game_id, controller_id):
