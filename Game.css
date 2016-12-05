@@ -1,0 +1,54 @@
+* { padding: 0; margin: 0; outline: 0; border: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+	color:white;
+	flex-shrink: 0;
+}
+
+#left_pane{
+	float: left;
+	background-color:black;
+	width:25%;
+	height:100%;
+	display: table;
+	overflow: hidden;
+}
+#credits{
+	font-family: arial;
+	display: table-cell;
+	vertical-align: middle;
+	overflow: hidden;
+}
+#name_text{
+	font-style: arial;
+	font-size: 300%;
+}
+#credits_text{
+	font-style: Times;
+	font-size: 90%;
+}
+#right_pane{
+	float: left;
+	background-color: black;
+	width:25%;
+	height:100%;
+	overflow: hidden;
+}
+#middle_pane{
+	float: left;
+	margin: 0;
+	background-color: black;
+	width: 50%;
+	height:100%;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	outline: 0;
+	border 0;
+}
+
