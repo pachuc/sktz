@@ -10,20 +10,10 @@ function Main(){
     });
 
     two.appendTo(elem);
-    var game = new Manatee(two, w, h);
+    var game = new Game(two, w, h);
 
 	two.bind('update', function(frameCount){
-		if(!game.endgame){
-			game.update(frameCount);
-		}
-		else{
-			audio.pause();
-			audio.currentTime = 0;
-			window.alert(game.winner + ' Wins!');
-			game.restartGame();
-			audio.play();
-		}
-		
+		game.update('red');
 	});
 
 	setInterval(function() {
