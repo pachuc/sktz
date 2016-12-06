@@ -17,8 +17,9 @@ function Main(game_id, num_controllers){
 	two.bind('update', function(frameCount){
 		//yeah apparently i shouldn't be making synchronous ajax calls as I'm basically blocking the UI thread with a get
 		//and could possibly cause the browser to hang/crash
-		var controller_data = JSON.parse($.ajax({type: "GET", url: game_state_string, async:false}).responseText);
-                game.update(controller_data);
+		//var controller_data = JSON.parse($.ajax({type: "GET", url: game_state_string, async:false}).responseText);
+                $.ajax({type: "GET", url: game_state_string, success: function(data){game.updateControls(JSON.parse(data))}, asyc:true});
+		game.update();
 	});
 
 	setInterval(function() {

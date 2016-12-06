@@ -13,22 +13,41 @@ class Game{
 	        this.height = h;
                 this.width = w;
       	 	this.controllers = num_controllers;
-                this.init();	
+		this.circles = [];
+		this.controls;
 	}
-        init(){
-                this.circle = this.two.makeCircle(300, 300, 50);
-                this.circle.fill = 'red';
-                this.circle.stroke = 'red';
-        }
-        update(controller_input){
-                var color = 'red';
-                if(controller_input['controller 0']=='Pressed'){
-			color = 'green';
+	updateControls(controls){
+		this.controls = controls;
+	}
+        draw(){
+        	var xinc = this.width/(this.controllers+1);
+		var ycord = this.height/2;
+		var radius = this.width/(this.controllers*4);
+		var color = 'red';
+		for(var i = 0; i<this.controllers; i++){
+			var xcord = (i+1) * xinc;
+			if(this.circles[i]){
+				this.two.remove(this.circles[i]);
+			}
+			if(this.controls){
+				var controller_name = 'controller' + i;
+                        	if(this.controls[controller_name]['status'] == 'CONNECTED'){
+                                	color = 'green';
+                        	}
+                        	else{
+                                	color = 'red';
+                        	}
+			}
+			else{
+				color = 'red';
+			}
+			this.circles[i] = this.two.makeCircle(xcord, ycord, radius); 
+			this.circles[i].stroke = color;
+			this.circles[i].fill = color;
+			
 		}
-                this.two.remove(this.circle);
-        	this.circle = this.two.makeCircle(300, 300, 50);
-                this.circle.fill = color;
-                this.circle.stroke = color;
-
+	}
+        update(){
+		this.draw();
         }
 }
