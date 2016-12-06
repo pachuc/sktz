@@ -17,6 +17,7 @@ class Game{
 		this.controls;
 	}
 	updateControls(controls){
+		console.log('Got updated controls');
 		this.controls = controls;
 	}
         draw(){
@@ -32,9 +33,11 @@ class Game{
 			if(this.controls){
 				var controller_name = 'controller' + i;
                         	if(this.controls[controller_name]['status'] == 'CONNECTED'){
+					console.log(controller_name + ': CONNECTED');
                                 	color = 'green';
                         	}
                         	else{
+					console.log(controller_name + ': DISCONNECTED');
                                 	color = 'red';
                         	}
 			}
