@@ -5,6 +5,7 @@ import logging
 import redis
 import uuid
 import json
+import string, random
 
 logger = logging.getLoggerClass()
 app = Flask(__name__)
@@ -21,7 +22,7 @@ def _setGame(game_id, game_state):
 def _setController(game_id, controller_id, controller_state):
     redis_key = '{0}/{1}'.format(game_id, controller_id)
     r.set(redis_key, json.dumps(controller_state))
-def game_exists(f):
+def _gameExists(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         game_id = kwargs['game_id']
@@ -30,28 +31,26 @@ def game_exists(f):
         else:
             logging.error('Game {0} does not exist'.format(game_id))
     return decorated_function
+def _idGenerator(size=5, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 @app.route('/start_game/<num_controllers>')
 def start_game(num_controllers):
-    game_id = uuid.uuid4()
-    
+    game_id = _idGenerator()
     game_state = {}
     game_state['status'] = 'INIT'
     game_state['num_controllers'] = int(num_controllers)
     controller_state = {}
     controller_state['status'] = 'DISCONNECTED'
     controller_state['input'] = {}
-    
     for controller_id in xrange(0, int(num_controllers)):
         _setController(game_id, controller_id, controller_state)
     _setGame(game_id, game_state)
-    
     logging.error('Initalized new game {0} ({1})'.format(game_id, game_state))
     return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers)
 
-
 @sockets.route('/connect_controller/<game_id>/<controller_id>')
-@game_exists
+@_gameExists
 def connect_controller(ws, game_id, controller_id):
     logging.error('Controller {0} connected to game {1}.'.format(controller_id, game_id))
     controller_state = _getController(game_id, controller_id)
@@ -65,7 +64,7 @@ def connect_controller(ws, game_id, controller_id):
     _setController(game_id, controller_id, controller_state)
 
 @app.route('/get_game_state/<game_id>')
-@game_exists
+@_gameExists
 def get_game_state(game_id):
     game_state = _getGame(game_id)
     num_controllers = game_state['num_controllers']
@@ -77,7 +76,7 @@ def get_game_state(game_id):
     return json.dumps(game_state)
 
 @app.route('/get_ports/<game_id>')
-@game_exists
+@_gameExists
 def get_ports(game_id):
     if not r.exists(game_id):
         logging.error('Game {0} does not exist, could not connect.'.format(game_id))
