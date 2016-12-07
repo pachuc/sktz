@@ -1,14 +1,10 @@
-from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getController, _idGenerator
+from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getController, _idGenerator, _assembleGameState
 from flask import Blueprint, render_template
 import logging
 import json
 
 html = Blueprint('html', __name__)
 ws = Blueprint('ws', __name__)
-
-@html.route('/')
-def test():
-    return 'test'
 
 @html.route('/start_game/<num_controllers>')
 def start_game(num_controllers):
@@ -45,11 +41,13 @@ def connect_controller(ws, game_id, controller_id):
 @html.route('/get_game_state/<game_id>')
 @_gameExists
 def get_game_state(game_id):
-    game_state = _getGame(game_id)
-    num_controllers = game_state['num_controllers']
+    return _assembleGameState(game_id)
 
-    for controller_id in xrange(0, num_controllers):
-        controller_name = 'controller{0}'.format(controller_id)
-        game_state[controller_name] = _getController(game_id, controller_id)
+@ws.route('/get_game_state_persist/<game_id>')
+@_gameExists
+def get_game_state_persist(ws, game_id):
+    while not ws.closed:
+        message = _assembleGameState(game_id)
+        ws.send(message)
 
-    return json.dumps(game_state)
+    

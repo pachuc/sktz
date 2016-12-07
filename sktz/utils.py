@@ -6,6 +6,16 @@ import sktz
 import logging
 
 
+def _assembleGameState(game_id):
+    game_state = _getGame(game_id)
+    num_controllers = game_state['num_controllers']
+
+    for controller_id in xrange(0, num_controllers):
+        controller_name = 'controller{0}'.format(controller_id)
+        game_state[controller_name] = _getController(game_id, controller_id)
+
+    return json.dumps(game_state)
+
 def _getGame(game_id):
     return json.loads(redis.get(game_id))
 
