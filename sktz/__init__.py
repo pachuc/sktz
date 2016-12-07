@@ -55,7 +55,7 @@ def connect_controller(ws, game_id, controller_id):
     logging.error('Controller {0} connected to game {1}.'.format(controller_id, game_id))
     controller_state = _getController(game_id, controller_id)
     if controller_state['status'] == 'CONNECTED':
-        logging.error('Cannot connect to already connected controller {0} on game {1}'.format(controller_id, game_id)
+        logging.error('Cannot connect to already connected controller {0} on game {1}'.format(controller_id, game_id))
         return None
     controller_state['status'] = 'CONNECTED'
     while not ws.closed:
