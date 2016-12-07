@@ -8,18 +8,20 @@ function Main(game_id, num_controllers){
     		width: w,
     		height: h
     	});
-    	var game_state_string = 'http://localhost:8000/get_game_state/' + game_id;
-
+    	var game_state_string = 'ws://localhost:8000/get_game_state_persist/' + game_id;
+        var socket = new WebSocket(game_state_string);
     
     	two.appendTo(elem);
     	var game = new Game(two, w, h, num_controllers);
-
+        socket.onmessage = function(event){
+        	game.updateControls(JSON.parse(event.data));
+        };
 	two.bind('update', function(frameCount){
 		//yeah apparently i shouldn't be making synchronous ajax calls as I'm basically blocking the UI thread with a get
 		//and could possibly cause the browser to hang/crash
 		//var controller_data = JSON.parse($.ajax({type: "GET", url: game_state_string, async:false}).responseText);
-                $.ajax({type: "GET", url: game_state_string, success: function(data){game.updateControls(JSON.parse(data));}, asyc:true});
-		game.update();
+                //$.ajax({type: "GET", url: game_state_string, success: function(data){game.updateControls(JSON.parse(data));}, asyc:true});
+                game.update();
 	});
 
 	setInterval(function() {
