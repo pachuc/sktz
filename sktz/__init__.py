@@ -54,6 +54,9 @@ def start_game(num_controllers):
 def connect_controller(ws, game_id, controller_id):
     logging.error('Controller {0} connected to game {1}.'.format(controller_id, game_id))
     controller_state = _getController(game_id, controller_id)
+    if controller_state['status'] == 'CONNECTED':
+        logging.error('Cannot connect to already connected controller {0} on game {1}'.format(controller_id, game_id)
+        return None
     controller_state['status'] = 'CONNECTED'
     while not ws.closed:
         message = ws.receive()
@@ -74,18 +77,3 @@ def get_game_state(game_id):
         game_state[controller_name] = _getController(game_id, controller_id)
 
     return json.dumps(game_state)
-
-@app.route('/get_ports/<game_id>')
-@_gameExists
-def get_ports(game_id):
-    if not r.exists(game_id):
-        logging.error('Game {0} does not exist, could not connect.'.format(game_id))
-        return None
-    game_state = _getGame(game_id)
-    num_controllers = game_state['num_controllers']
-    available_ports = []
-    for controller_id in xrange(0, num_controllers):
-        controller_state = _getController(game_id, controller_id)
-        if controller_state['status'] == 'DISCONNECTED':
-            available_ports.append(controller_id)
-    return available_ports
