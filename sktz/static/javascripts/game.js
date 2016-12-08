@@ -33,11 +33,11 @@ class Game{
 			if(this.controls){
 				var controller_name = 'controller' + i;
                         	if(this.controls[controller_name]['status'] == 'CONNECTED'){
-					console.log(controller_name + ': CONNECTED');
+					//console.log(controller_name + ': CONNECTED');
                                 	color = 'green';
                         	}
                         	else{
-					console.log(controller_name + ': DISCONNECTED');
+					//console.log(controller_name + ': DISCONNECTED');
                                 	color = 'red';
                         	}
 			}

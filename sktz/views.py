@@ -2,6 +2,7 @@ from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getCont
 from flask import Blueprint, render_template
 import logging
 import json
+import time
 
 html = Blueprint('html', __name__)
 ws = Blueprint('ws', __name__)
@@ -49,5 +50,6 @@ def get_game_state_persist(ws, game_id):
     while not ws.closed:
         message = _assembleGameState(game_id)
         ws.send(message)
+        time.sleep(1)
 
     
