@@ -7,8 +7,8 @@ import time
 html = Blueprint('html', __name__)
 ws = Blueprint('ws', __name__)
 
-@html.route('/start_game/<num_controllers>')
-def start_game(num_controllers):
+@html.route('/start_game/<game_name>/<num_controllers>')
+def start_game(game_name, num_controllers):
     game_id = _idGenerator()
     game_state = {}
     game_state['status'] = 'INIT'
@@ -19,8 +19,8 @@ def start_game(num_controllers):
     for controller_id in xrange(0, int(num_controllers)):
         _setController(game_id, controller_id, controller_state)
     _setGame(game_id, game_state)
-    logging.error('Initalized new game {0} ({1})'.format(game_id, game_state))
-    return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers)
+    logging.error('Initalized new {2} {0} ({1})'.format(game_id, game_state, game_name))
+    return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers, game_name=game_name)
 
 @ws.route('/connect_controller/<game_id>/<controller_id>')
 @_gameExists
