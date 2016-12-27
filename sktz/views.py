@@ -34,8 +34,11 @@ def connect_controller(ws, game_id, controller_id):
     while not ws.closed:
         message = ws.receive()
         if message is not None:
+            message = json.loads(message)
+            logging.error('Controller {0} on game {1} posted {2}'.format(controller_id, game_id, message))
             controller_state['input'] = message
         _setController(game_id, controller_id, controller_state)
+    logging.error('Correctly disconnected the controller')
     controller_state['status'] = 'DISCONNECTED'
     _setController(game_id, controller_id, controller_state)
 
