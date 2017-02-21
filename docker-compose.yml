@@ -1,7 +1,7 @@
 redis:
     image: redis:latest
 sktz:
-    image: sktz:latest
+    build: .
     command: gunicorn -b 0.0.0.0:80 -k flask_sockets.worker sktz:app
     volumes:
         - .:/src
