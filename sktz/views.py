@@ -1,5 +1,5 @@
 from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getController, _idGenerator, _assembleGameState
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 import logging
 import json
 import time
@@ -13,9 +13,11 @@ def index():
         num_controllers = request.form.get('num_controllers')
         game = request.form.get('Game')
         if game and num_controllers:
-            return redirect(url_for('/start_game/{0}/{1}'.format(game, num_controllers)))
+            logging.debug('Game and controllers : {0}, {1}'.format(game, num_controllers))
+            return redirect(url_for('html.start_game', game_name=game, num_controllers=num_controllers))
     else:
-        render_template('index.html')
+        logging.debug('Render template with no args.')
+        return render_template('index.html')
 
 @html.route('/start_game/<game_name>/<num_controllers>')
 def start_game(game_name, num_controllers):
