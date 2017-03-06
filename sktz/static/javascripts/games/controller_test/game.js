@@ -5,7 +5,7 @@ Game object class, that renders a game to a twojs canvas.
 **/
 class Game{
 
-	constructor(two, w, h, num_controllers){
+	constructor(two, w, h, num_controllers, game_id){
 
 		this.two = two;
 	        this.height = h;
@@ -67,6 +67,8 @@ class Game{
 			this.circles[i].fill = color;
 			
 		}
+		var gamename = this.two.Text('game_id', this.width/2, this.height/4);
+		gamename.size = 20;
 	}
         update(){
 		this.draw();

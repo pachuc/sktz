@@ -9,7 +9,7 @@ function Main(game_id, num_controllers){
     		height: h
     	});    
     	two.appendTo(elem);
-    	var game = new Game(two, w, h, num_controllers);
+    	var game = new Game(two, w, h, num_controllers, game_id);
    	
 	var game_state_string = 'ws://localhost:8000/get_game_state_persist/' + game_id;
         var socket = new WebSocket(game_state_string);     
