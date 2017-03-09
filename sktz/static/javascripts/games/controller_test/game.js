@@ -67,8 +67,11 @@ class Game{
 			this.circles[i].fill = color;
 			
 		}
-		var gamename = this.two.Text('game_id', this.width/2, this.height/4);
-		gamename.size = 20;
+		console.log('Test');
+		var gamename = this.two.makeText('game_id', this.width/2, this.height/4);
+		gamename.size = 40;
+		gamename.stroke ='red';
+		gamename.fill = 'red';
 	}
         update(){
 		this.draw();
