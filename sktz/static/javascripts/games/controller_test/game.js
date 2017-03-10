@@ -8,9 +8,10 @@ class Game{
 	constructor(two, w, h, num_controllers, game_id){
 
 		this.two = two;
-	        this.height = h;
-                this.width = w;
-      	 	this.controllers = num_controllers;
+		this.height = h;
+		this.width = w;
+		this.controllers = num_controllers;
+		this.game_id = game_id
 		this.circles = [];
 		this.controls;
 		this.ycords = [];
@@ -68,7 +69,7 @@ class Game{
 			
 		}
 		console.log('Test');
-		var gamename = this.two.makeText('game_id', this.width/2, this.height/4);
+		var gamename = this.two.makeText(this.game_id, this.width/2, this.height/4);
 		gamename.size = 40;
 		gamename.stroke ='red';
 		gamename.fill = 'red';
