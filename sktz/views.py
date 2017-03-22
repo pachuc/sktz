@@ -1,4 +1,5 @@
 from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getController, _idGenerator, _assembleGameState
+from sktz import settings
 from flask import Blueprint, render_template, redirect, url_for, request
 import logging
 import json
@@ -6,6 +7,7 @@ import time
 
 html = Blueprint('html', __name__)
 ws = Blueprint('ws', __name__)
+server_url = settings['SERVER_URL']
 
 @html.route('/', methods=['GET', 'POST'])
 def index():
@@ -33,7 +35,8 @@ def start_game(game_name, num_controllers):
         _setController(game_id, controller_id, controller_state)
     _setGame(game_id, game_state)
     logging.debug('Initalized new {2} {0} ({1})'.format(game_id, game_state, game_name))
-    return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers, game_name=game_name)
+    return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers, 
+        game_name=game_name, server_url=server_url)
 
 @ws.route('/connect_controller/<game_id>/<controller_id>')
 @_gameExists

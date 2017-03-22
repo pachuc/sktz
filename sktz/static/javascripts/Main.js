@@ -1,4 +1,4 @@
-function Main(game_id, num_controllers){
+function Main(game_id, num_controllers, server_url){
 	var w = $('#Main').width();
 	var h = $('#Main').height();
 	var elem = document.getElementById('Main');
@@ -11,7 +11,7 @@ function Main(game_id, num_controllers){
     	two.appendTo(elem);
     	var game = new Game(two, w, h, num_controllers, game_id);
    	
-	var game_state_string = 'ws://localhost:8000/get_game_state_persist/' + game_id;
+	var game_state_string = 'ws://' + server_url + ':8000/get_game_state_persist/' + game_id;
         var socket = new WebSocket(game_state_string);     
 	socket.onmessage = function(event){
         	game.updateControls(JSON.parse(event.data));
