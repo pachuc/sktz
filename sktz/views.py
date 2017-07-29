@@ -15,10 +15,10 @@ def index():
         num_controllers = request.form.get('num_controllers')
         game = request.form.get('Game')
         if game and num_controllers:
-            logging.debug('Game and controllers : {0}, {1}'.format(game, num_controllers))
+            logging.info('Game and controllers : {0}, {1}'.format(game, num_controllers))
             return redirect(url_for('html.start_game', game_name=game, num_controllers=num_controllers))
     else:
-        logging.debug('Render template with no args.')
+        logging.info('Render template with no args.')
         return render_template('index.html')
 
 @html.route('/start_game/<game_name>/<num_controllers>')
@@ -34,27 +34,27 @@ def start_game(game_name, num_controllers):
     for controller_id in xrange(0, int(num_controllers)):
         _setController(game_id, controller_id, controller_state)
     _setGame(game_id, game_state)
-    logging.debug('Initalized new {2} {0} ({1})'.format(game_id, game_state, game_name))
+    logging.info('Initalized new {2} {0} ({1})'.format(game_id, game_state, game_name))
     return render_template('Game.html', game_id=str(game_id), num_controllers=num_controllers, 
         game_name=game_name, server_url=server_url)
 
 @ws.route('/connect_controller/<game_id>/<controller_id>')
 @_gameExists
 def connect_controller(ws, game_id, controller_id):
-    logging.debug('Controller {0} connected to game {1}.'.format(controller_id, game_id))
+    logging.info('Controller {0} connected to game {1}.'.format(controller_id, game_id))
     controller_state = _getController(game_id, controller_id)
     if controller_state['status'] == 'CONNECTED':
-        logging.debug('Cannot connect to already connected controller {0} on game {1}'.format(controller_id, game_id))
+        logging.info('Cannot connect to already connected controller {0} on game {1}'.format(controller_id, game_id))
         return None
     controller_state['status'] = 'CONNECTED'
     while not ws.closed:
         message = ws.receive()
         if message is not None:
             message = json.loads(message)
-            logging.debug('Controller {0} on game {1} posted {2}'.format(controller_id, game_id, message))
+            logging.info('Controller {0} on game {1} posted {2}'.format(controller_id, game_id, message))
             controller_state['input'] = message
         _setController(game_id, controller_id, controller_state)
-    logging.debug('Correctly disconnected the controller')
+    logging.info('Correctly disconnected the controller')
     controller_state['status'] = 'DISCONNECTED'
     _setController(game_id, controller_id, controller_state)
 
