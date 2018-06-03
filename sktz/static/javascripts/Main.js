@@ -11,15 +11,27 @@ function Main(game_id, num_controllers, server_url){
     	two.appendTo(elem);
     	var game = new Game(two, w, h, num_controllers, game_id);
    	
-	var game_state_string = 'ws://' + server_url + ':8000/get_game_state_persist/' + game_id;
-        var socket = new WebSocket(game_state_string);     
-	socket.onmessage = function(event){
-        	game.updateControls(JSON.parse(event.data));
-        };
+	//var game_state_string = 'ws://' + server_url + ':8000/get_game_state_persist/' + game_id;
+        //var socket = new WebSocket(game_state_string);     
+	//socket.onmessage = function(event){
+        //	game.updateControls(JSON.parse(event.data));
+        //};
 
 	two.bind('update', function(frameCount){
                 game.update();
 	});
+
+	setInterval(function() {
+
+		fetch('/check_game_inputs/' + game_id)
+		.then(
+    		response => { return response.json(); }
+		)
+		.then(
+    		json => {game.updateControls(json)}
+		);
+	}, 1/1000);
+
 	setInterval(function() {
   		two.update();
 	}, FRAMERATE);

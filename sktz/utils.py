@@ -29,6 +29,15 @@ def _setController(game_id, controller_id, controller_state):
     redis_key = '{0}/{1}'.format(game_id, controller_id)
     redis.set(redis_key, json.dumps(controller_state), ex=redis_timeout)
 
+
+def _clearControllerInputs(game_id):
+    num_controllers = _getGame(game_id)['num_controllers']
+    for controller_id in xrange(0, num_controllers):
+        controller_state = _getController(game_id, controller_id)
+        controller_state['input'] = ''
+        _setController(game_id, controller_id, controller_state)
+
+
 def _gameExists(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

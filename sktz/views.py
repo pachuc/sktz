@@ -1,4 +1,4 @@
-from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getController, _idGenerator, _assembleGameState
+from sktz.utils import _gameExists, _setGame, _getGame, _setController, _getController, _idGenerator, _assembleGameState, _clearControllerInputs
 from sktz import settings
 from flask import Blueprint, render_template, redirect, url_for, request
 import logging
@@ -11,15 +11,54 @@ server_url = settings['SERVER_URL']
 
 @html.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        num_controllers = request.form.get('num_controllers')
-        game = request.form.get('Game')
-        if game and num_controllers:
-            logging.error('Game and controllers : {0}, {1}'.format(game, num_controllers))
-            return redirect(url_for('html.start_game', game_name=game, num_controllers=num_controllers))
+    return render_template('index.html')
+
+
+@html.route('/create_game/', methods=['POST'])
+def create_game():
+    num_controllers = request.form.get('num_controllers')
+    game = request.form.get('Game')
+    logging.error('Game and controllers : {0}, {1}'.format(game, num_controllers))
+    return redirect(url_for('html.start_game', game_name=game, num_controllers=num_controllers))
+
+
+@html.route('/create_controller/', methods=['POST'])
+def create_controller():
+    game_id = request.form.get('game_id')
+    username = request.form.get('username')
+    return redirect(url_for('html.start_controller', game_id=game_id, username=username))
+
+
+@html.route('/controller_input/<game_id>/<controller_id>/<username>', methods=['POST'])
+@_gameExists
+def controller_input(game_id, controller_id, username):
+    controller_state = _getController(game_id, controller_id)
+    controller_state['input'] = request.form.get('message')
+    _setController(game_id, controller_id, controller_state)
+    logging.error('updated controller {0} on game {1}: {2}'.format(controller_id, game_id, "ready"))
+    return render_template('Controller.html', game_id=str(game_id), username=str(username), controller_id=controller_id)
+
+@html.route('/start_controller/<game_id>/<username>')
+@_gameExists
+def start_controller(game_id, username):
+    game_state = json.loads(_assembleGameState(game_id))
+    logging.error(game_state)
+    num_controllers = game_state['num_controllers']
+    for i in range(0, num_controllers):
+        controller_state = _getController(game_id, i)
+        if controller_state['status'] == 'DISCONNECTED':
+            controller_id = i
+            break
     else:
-        logging.error('Render template with no args.')
-        return render_template('index.html')
+        logging.error('No open controller slots on game: {0}'.format(game_id))
+        return None
+
+    controller_state = _getController(game_id, controller_id)
+    controller_state['status'] = 'CONNECTED'
+    controller_state['username'] = username
+    _setController(game_id, controller_id, controller_state)
+    logging.error('Connected {0} to game {1}. (Controller ID {2})'.format(username, game_id, controller_id))
+    return render_template('Controller.html', game_id=str(game_id), username=str(username), controller_id=controller_id)
 
 @html.route('/start_game/<game_name>/<num_controllers>')
 def start_game(game_name, num_controllers):
@@ -30,7 +69,8 @@ def start_game(game_name, num_controllers):
     game_state['num_controllers'] = int(num_controllers)
     controller_state = {}
     controller_state['status'] = 'DISCONNECTED'
-    controller_state['input'] = {}
+    controller_state['input'] = ''
+    controller_state['username'] = ''
     for controller_id in xrange(0, int(num_controllers)):
         _setController(game_id, controller_id, controller_state)
     _setGame(game_id, game_state)
@@ -62,6 +102,13 @@ def connect_controller(ws, game_id, controller_id):
 @_gameExists
 def get_game_state(game_id):
     return _assembleGameState(game_id)
+
+@html.route('/check_game_inputs/<game_id>')
+@_gameExists
+def check_game_inputs(game_id):
+    game_state = _assembleGameState(game_id)
+    #_clearControllerInputs(game_id)
+    return game_state
 
 @ws.route('/get_game_state_persist/<game_id>')
 @_gameExists

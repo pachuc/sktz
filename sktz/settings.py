@@ -4,7 +4,7 @@ REDIS_DB = 0
 REDIS_URL = 'redis://{host}:{port}/{db}'.format(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 REDIS_TIMEOUT = 60 * 60
 
-SERVER_URL = 'roadcrawler.com'
+SERVER_URL = 'localhost'
 
 LOGGING = {
     'version': 1,
