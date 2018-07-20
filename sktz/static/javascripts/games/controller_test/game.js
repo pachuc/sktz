@@ -13,7 +13,7 @@ class Game{
 		this.controllers = num_controllers;
 		this.game_id = game_id
 		this.circles = [];
-		this.controls;
+		this.game_state;
 		this.ycords = [];
 
 		// player vars
@@ -26,19 +26,26 @@ class Game{
 			this.ycords[i] = this.height/2;
 		}
 	}
-	updateControls(controls){
-		this.controls = controls;
-
-		console.log(this.controls);
+	updateGameState(game_state) {
+		this.game_state = game_state;
+	}
+	updateServerState(game_state) {
+		fetch('/update_game_state/' + game_id, {
+			method: 'post',
+    		body: JSON.stringify(game_state)
+		}).then(function(response) {
+			console.log('Updated game state in server.');
+			console.log(response.json());
+		})
 	}
 	updateMessages(controller_name, controller_num) {
-		this.messages[controller_num] = this.controls[controller_name]['input'];
+		this.messages[controller_num] = this.game_state[controller_name]['input'];
 	}
 	updateUsernames(controller_name, controller_num) {
-		this.usernames[controller_num] = this.controls[controller_name]['username'];
+		this.usernames[controller_num] = this.game_state[controller_name]['username'];
 	}
     connected(controller_name){
-		return (this.controls[controller_name]['status'] == 'CONNECTED');
+		return (this.game_state[controller_name]['status'] == 'CONNECTED');
 	}
     draw(){
         var xinc = this.width/(this.controllers+1);
@@ -51,7 +58,7 @@ class Game{
 			if(this.circles[i]){
 				this.two.remove(this.circles[i]);
 			}
-			if(this.controls){
+			if(this.game_state){
 				var controller_name = 'controller' + i;
 				this.updateMessages(controller_name, i);
 				this.updateUsernames(controller_name, i);
@@ -74,12 +81,12 @@ class Game{
 			this.circles[i].fill = color;
 
 			this.usernameText[i] = this.two.makeText(this.usernames[i], xcord, this.height*3/4);
-			this.usernameText[i].size = 20;
+			this.usernameText[i].size = 30;
 			this.usernameText[i].stroke = color;
 			this.usernameText[i].fill = color;
 
 			this.messageText[i] = this.two.makeText(this.messages[i], xcord, this.ycords[i]);
-			this.messageText[i].size = 20;
+			this.messageText[i].size = 30;
 			this.messageText[i].stroke = 'white';
 			this.messageText[i].fill = 'white';
 			

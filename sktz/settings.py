@@ -24,7 +24,7 @@ LOGGING = {
             'formatter': 'verbose'
         },
         'syslog': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.SysLogHandler',
             'formatter': 'verbose',
             'address': ('localhost', 514),
@@ -38,3 +38,5 @@ LOGGING = {
         }
     }
 }
+
+GAME_LIST = ['trivia', 'math', 'mafia']

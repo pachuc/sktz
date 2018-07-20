@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+    var game_id = "{{game_id}}";
+    var controller_id = {{controller_id}};
+    var controller_state = {};
+    var game_state = {};
+    controller_state['GAME_ID'] = game_id;
+    controller_state['CONTROLLER_ID'] = controller_id;
+    controller_state['username'] = '';
+
+    function post_controller_data() {
+        fetch('/post-controller-data/' + game_id, {
+                method: 'post',
+                body: JSON.stringify(controller_state)
+        })
+    }
+
+    function get_game_data() {
+        fetch('/get-game-data/' + game_id)
+		.then(
+    		response => { return response.json(); }
+		)
+		.then(
+    		json => { game_state = json; }
+		);
+    }
+
+    function update_username() {
+        controller_state['username'] = document.getElementById("username").value;
+    }
+    
+
+    setInterval(function() {
+        post_controller_data();
+        get_game_data();
+
+        if (controller_state['username'] == '') {
+            document.getElementById("username_input").style.visibility="visible";  
+        }
+        else {
+            document.getElementById("username_input").style.visibility="hidden";  
+        }
+
+        if (game_state['started'] == false && controller_id == 0) {
+            document.getElementById("start_game").style.visibility="visible";
+        }
+        else {
+            document.getElementById("start_game").style.visibility="hidden";
+        }
+
+        if (game_start['started'] == true) {
+            document.getElementById("trivial_control").style.visibility="visible";
+            document.getElementById("waiting").style.visibility="hidden";
+        }
+        else {
+            document.getElementById("trivial_control").style.visibility="hidden";
+            document.getElementById("waiting").style.visibility="visible";
+        }
+
+    }, 1);
+
+
+
+</script>
+<body>
+
+    <div class="username_input">
+        <input name="username" type="text">
+        <input name="submit_username" 
+               onclick="update_username();" 
+               type="button" 
+               value="Execute"/>
+    </div>
+
+    <div class="start_game">
+        Hello player 1! Should we start the game?
+    </div>
+
+    <div class="trivia_control">
+
+    </div>
+    
+    <div class="waiting">
+        Waiting for game to start.
+    </div>
+
+
+
+
+</body>
+</html>

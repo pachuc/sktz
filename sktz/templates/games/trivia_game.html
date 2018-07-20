@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/trivia_game.css') }}">
+	<meta charset="utf-8">
+    <script src="{{ url_for('static',filename='javascripts/two.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='javascripts/games/trivia.js') }}"></script>
+    
+	<title>{{game_id}}</title>
+</head>
+<body>
+	<div id="Main">
+	</div>
+	<script>
+        var game_id_num = '{{game_id}}';
+  		Main(game_id_num);
+  	</script>
+</body>
+</html>

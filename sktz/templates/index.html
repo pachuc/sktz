@@ -1,88 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
+ <!-- Latest compiled and minified CSS -->
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <!-- jQuery library -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ <!-- Latest compiled JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 </head>
 <style>
-	/* Style the tab */
-.tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-    font-size: 17px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-    background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-    background-color: #ccc;
-}
-
-/* Style the tab content */
-.tabcontent {
-    display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-}
+	.game_menu {
+		margin: 1%;
+	}
+	.controller_menu {
+		margin: 1%;
+	}
 </style>
 
-<script>
-		function openCity(evt, cityName) {
-			var i, tabcontent, tablinks;
-			tabcontent = document.getElementsByClassName("tabcontent");
-			for (i = 0; i < tabcontent.length; i++) {
-				tabcontent[i].style.display = "none";
-			}
-			tablinks = document.getElementsByClassName("tablinks");
-			for (i = 0; i < tablinks.length; i++) {
-				tablinks[i].className = tablinks[i].className.replace(" active", "");
-			}
-			document.getElementById(cityName).style.display = "block";
-			evt.currentTarget.className += " active";
-		}
-</script>
 <body>
-	<div class="tab">
-		<button class="tablinks" onclick="openCity(event, 'New Game')">New Game</button>
-		<button class="tablinks" onclick="openCity(event, 'Connect Controller')">Connect Controller</button>
-	</div>
-	<div id="New Game" class="tabcontent">
-		<div>
-			<form action="/create_game/" method="post">
-				Game: <select name="Game">
-				<option value="controller_test">Controller Test</option>
-				</select><br>
-				Number of Controllers: <input type="number" name="num_controllers">
-				<input type ="submit" name="submit">
-			
-			</form>
+
+	<div class=".col-md-4">
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#game">Create Game</a></li>
+			<li><a data-toggle="tab" href="#controller">Connect Controller</a></li>
+	  	</ul>
+	  
+	  	<div class="tab-content">
+			<div id="game" class="tab-pane fade in active">
+				<div class="game_menu">
+					<h3>Start a new game:</h3>
+					<form action="/create-game/" method="post">
+						Game List:
+						<select name="game">
+							{% for game_name in games %}
+								<option value="{{game_name}}">{{game_name}}</option>
+							{% endfor %}
+						</select> 
+						<input type="submit" value="Submit">
+					</form> 
+				</div>
+			</div>
+			<div id="controller" class="tab-pane fade">
+				<div class="controller_menu">
+					<h3>Connect a controller:</h3>
+					<form action="/create-controller/" method="post">
+						Game ID:  <input name="gameid" type="text">
+						<input type="submit" value="Submit">
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
-		  
-	<div id="Connect Controller" class="tabcontent">
-		<div>
-			<form action="/create_controller/" method="post">
-				Game ID: <input type="text" name="game_id"><br>
-				User Name: <input type="text" name="username"><br>
-				<input type="submit" name="submit">
-			</form>
-		</div>
-	</div>
-	
+
 </body>
 </html>
