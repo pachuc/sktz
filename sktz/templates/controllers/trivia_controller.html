@@ -9,6 +9,7 @@
     controller_state['GAME_ID'] = game_id;
     controller_state['CONTROLLER_ID'] = controller_id;
     controller_state['username'] = '';
+    controller_state['start_game'] = 'false';
 
     function post_controller_data() {
         fetch('/post-controller-data/' + game_id, {
@@ -30,6 +31,10 @@
     function update_username() {
         controller_state['username'] = document.getElementById("username").value;
     }
+
+    function start_game() {
+        controller_state['start_game'] = true;
+    }
     
 
     setInterval(function() {
@@ -43,7 +48,7 @@
             document.getElementById("username_input").style.visibility="hidden";  
         }
 
-        if (game_state['started'] == false && controller_id == 0) {
+        if (game_state['game_phase'] == 'start' && controller_id == 0) {
             document.getElementById("start_game").style.visibility="visible";
         }
         else {
@@ -76,6 +81,10 @@
 
     <div class="start_game">
         Hello player 1! Should we start the game?
+        <input name="start_game"
+               onclick="start_game();"
+               type="button"
+               value="Execute"/>
     </div>
 
     <div class="trivia_control">

@@ -9,9 +9,12 @@ redis_timeout = settings['REDIS_TIMEOUT']
 
 def get_controllers(game_id):
     game_state = get_game(game_id)
-    num_controllers = game_state['num_controllers']
+    num_controllers = game_state['NUM_CONTROLLERS']
     controllers = []
-    for controller_id in xrange(0, num_controllers):
+    num_c_to_get = get_next_controller_id(game_id, num_controllers)
+    if num_c_to_get is None:
+        num_c_to_get = num_controllers
+    for controller_id in xrange(0, num_c_to_get):
         controllers.append(get_controller(game_id, controller_id))
     return json.dumps(controllers)
 

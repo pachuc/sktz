@@ -24,37 +24,44 @@ class Game{
 
 	constructor(two, w, h, game_id){
 
+        // required game vars
 		this.two = two;
 		this.height = h;
         this.width = w;
         this.game_id = game_id
         this.num_controllers = 5;
-
+        // required game state vars
         this.game_state = {};
         this.game_state['CAN_CONNECT'] = true;
         this.game_state['NUM_CONTROLLERS'] = this.num_controllers;
         this.game_state['CONTROLLER_TEMPLATE'] = 'trivia_controller.html';
         this.game_state['GAME_ID'] = game_id;
 
+        // trivia game state vars
+        this.game_state['game_phase'] = 'waiting';
+
+
         this.controller_state = [];
-        this.post_game_state();
+        this.post_game_data();
         this.init_player_vars();
 
 
         // drawing variables
         this.hinc = this.height/10;
         this.winc = this.width/10;
+
+        
     }
     
-    post_game_state() {
+    post_game_data() {
         fetch('/post-game-data/' + this.game_id, {
                 method: 'post',
                 body: JSON.stringify(this.game_state)
         })
     }
 
-    get_controller_state() {
-        fetch('/get-controller-data/' + game_id)
+    get_controller_data() {
+        fetch('/get-controller-data/' + this.game_id)
 		.then(
     		response => { return response.json(); }
 		)
@@ -102,6 +109,21 @@ class Game{
         this.draw_players();
 	}
     update(){
-		this.draw();
+
+
+        if (this.game_state['game_phase'] == 'waiting') {
+            // draw start game
+            this.draw();
+            // poll for controller state.
+            this.get_controller_data();
+
+            // need to check controller data to see if we can change phases.
+            // if game is ready to start:
+            this.game_state['game_phase'] = 'START';
+            this.game_state['CAN_CONNECT'] = false;
+            //update server
+            this.post_game_data();
+
+        }
     }
 }
