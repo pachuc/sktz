@@ -26,13 +26,14 @@ def create_game():
                                  server_url=server_url)
 
 @html.route('/create-controller/', methods=['POST'])
-@game_exists
+#@game_exists
 def create_controller():
     game_id = str(request.form['gameid'])
     game_state = get_game(game_id)
     if not game_state['CAN_CONNECT']:
+        logging.error(game_state['CAN_CONNECT'])
         return 'Cannot connect controller.'
-    controller_template = game_state['CONTROLLER_TEMPLATE']
+    controller_template = 'controllers/' + game_state['CONTROLLER_TEMPLATE']
     num_controllers = game_state['NUM_CONTROLLERS']
     controller_id = get_next_controller_id(game_id, num_controllers)
     logging.error('Created new controller {0} on game {1}'.format(controller_id, game_id))
@@ -66,4 +67,4 @@ def get_controller_data(game_id):
 @game_exists
 def get_game_data(game_id):
     logging.error('Serving game data for game {0}'.format(game_id))
-    return get_game(game_id)
+    return json.dumps(get_game(game_id))

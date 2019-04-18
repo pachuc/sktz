@@ -120,7 +120,7 @@ class Game{
             // need to check controller data to see if we can change phases.
             // if game is ready to start:
             this.game_state['game_phase'] = 'START';
-            this.game_state['CAN_CONNECT'] = false;
+            //this.game_state['CAN_CONNECT'] = false;
             //update server
             this.post_game_data();
 
